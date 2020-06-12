@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* reset */
+* {
+  box-sizing: border-box;
+}
+
+html, body, h1, h2, h3, ul, li, a, p {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+}
+
+input:focus, 
+textarea:focus, 
+button:focus,
+select:focus {
+  outline: none;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+}
+
+select {
+  text-transform: capitalize;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* fonts */
+html {
+  font-size: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* elements */
+
+button {
+  border: none;
+  border-radius: 1px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  background-color: #EAEAEA;
+  border: none;
+}
+
+/* layout */
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+footer {
+  margin-top: auto;
+}
+
+header, main, footer {
+  padding: 1rem;
+}
+
+/* variables */
+
+/* mobile first  */
+
+/* desktop */
+
+
