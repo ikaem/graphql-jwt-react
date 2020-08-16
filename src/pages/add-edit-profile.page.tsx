@@ -1,6 +1,6 @@
-import React, { useReducer, useState } from 'react'
+import React, { useReducer, useState, useEffect } from 'react'
 import styled from "styled-components";
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, useMutation, gql, useLazyQuery } from "@apollo/client";
 import { Redirect } from "react-router-dom";
 
 import Layout from "../components/layout.component";
@@ -116,7 +116,14 @@ const AddEditProfilePage = () => {
 
     const [ formState, formStateDispatch ] = useReducer(formStateReducer, initialFormState);
 
-    const { data: countriesData, loading: countriesLoading, error: countriesError } = useQuery(GET_COUNTRIES_QUERY);
+    // const { data: countriesData, loading: countriesLoading, error: countriesError } = useQuery(GET_COUNTRIES_QUERY);
+
+    const [ getCountries, { data: countriesData, loading: countriesLoading, error: countriesError } ] = useLazyQuery(GET_COUNTRIES_QUERY);
+
+    useEffect(() => {
+        getCountries()
+    }, [])
+
 
     const [ createUser, { data } ] = useMutation(NEW_USER_MUTATION, {
         variables: {

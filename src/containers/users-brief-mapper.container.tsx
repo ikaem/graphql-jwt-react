@@ -3,7 +3,21 @@ import styled from "styled-components";
 
 import UserBrief from "../components/user-brief.component";
 
+// interface UsersBriefMapperProps {
+//         avatar_link: string;
+//         city: string;
+//         first_name: string;
+//         last_name: string;
+//         user_id: string;
+//         website: string;
+//         country: {
+//             country_name: string;
+//     }
+// }
+
 interface UsersBriefMapperProps {
+
+    users: {
         avatar_link: string;
         city: string;
         first_name: string;
@@ -12,11 +26,12 @@ interface UsersBriefMapperProps {
         website: string;
         country: {
             country_name: string;
+        }
     }
 }
 
 // const UsersBriefMapper = ({ users }: { users: UsersBriefMappeProps[]}) => {
-const UsersBriefMapper: React.FC<{users: UsersBriefMapperProps[]}> = ({ users }) => {
+const UsersBriefMapper = ({ users }: { users: UsersBriefMapperProps["users"][] } ) => {
 // const UsersBriefMapper = ({ users }: { users: UsersBriefMappeProps[]}) => {
 
     return (

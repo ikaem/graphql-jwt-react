@@ -1,6 +1,6 @@
-import React, { useReducer, useState } from 'react'
+import React, { useReducer, useState, useEffect } from 'react'
 import styled from "styled-components";
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, useMutation, gql, useLazyQuery } from "@apollo/client";
 import { Redirect, useParams } from "react-router-dom";
 
 import Layout from "../components/layout.component";
@@ -80,7 +80,6 @@ interface FormStateInterface {
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
     country: number;
     city: string;
     website: string;
@@ -119,8 +118,6 @@ const formStateReducer = (state: FormStateInterface, action: ActionInterface) =>
             return { ...state, last_name: action.payload }
         case "email":
             return { ...state, email: action.payload }
-        case "password":
-            return { ...state, password: action.payload }
         case "country":
             return { ...state, country: +action.payload }
         case "city":
@@ -148,7 +145,27 @@ const EditProfilePage = () => {
 
     const [ formState, formStateDispatch ] = useReducer(formStateReducer, initialFormState);
 
-    const { data: userForEditData, loading: userForEditLoading, error: userForEditError } = useQuery(GET_USER_FOR_EDIT_QUERY, {
+    // const { data: userForEditData, loading: userForEditLoading, error: userForEditError } = useQuery(GET_USER_FOR_EDIT_QUERY, {
+    //     variables: {
+    //         user_id: +user_id,
+    //     },
+    //     onCompleted: (data) => {
+
+    //         const { __typename, ...restOfUser } = data.getUserForEdit.user;
+
+    //         const userForState = {
+    //             ...restOfUser,
+    //             country: +restOfUser.country.country_id,
+    //             user_id: +restOfUser.user_id,
+    //         }
+    //         formStateDispatch({
+    //             type: "userForEdit",
+    //             payload: userForState,
+    //         })
+    //     }
+    // });
+
+    const [ getUserForEdit, { data: userForEditData, loading: userForEditLoading, error: userForEditError }] = useLazyQuery(GET_USER_FOR_EDIT_QUERY, {
         variables: {
             user_id: +user_id,
         },
@@ -168,16 +185,20 @@ const EditProfilePage = () => {
         }
     });
 
+    useEffect(() => {
+        getUserForEdit()
+    }, []);
+
+
+
     const [ editUser, { data } ] = useMutation(EDIT_USER_MUTATION, {
         variables: {
             ...formState
         },
         onCompleted: ({ editUser }) => {
-            console.log("mutation is complete: ", editUser);
             setPathToEditedUser(editUser.user_id);
         },
         onError: (error) => {
-            console.log("state again of variuables:", formState);
             console.log(error)
         }
     });

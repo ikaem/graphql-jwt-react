@@ -4,22 +4,27 @@ import { Link } from "react-router-dom";
 
 
 interface UserProfileDetailedProps {
-    age: number;
-    avatar_link: string;
-    city: string;
-    country: {
-        country_name: string;
+
+    user: {
+        age: number;
+        avatar_link: string;
+        city: string;
+        country: {
+            country_name: string;
+        };
+        email: string;
+        first_name: string;
+        last_name: string;
+        hobbies: string[];
+        user_id: string;
+        website: string;
     };
-    email: string;
-    first_name: string;
-    last_name: string;
-    hobbies: string[];
-    user_id: string;
-    website: string;
     deleteUser: any;
 }
 
-const UserProfileDetailed: React.FC<UserProfileDetailedProps> = ({ age, avatar_link, city, country, email, first_name, last_name, hobbies, user_id, website, deleteUser }) => {
+const UserProfileDetailed = ({ user, deleteUser }: UserProfileDetailedProps) => {
+
+    const { age, avatar_link, city, country, email, first_name, last_name, hobbies, user_id, website } = user;
 
     return (
     <UserProfileDetailedStyled>
@@ -33,7 +38,8 @@ const UserProfileDetailed: React.FC<UserProfileDetailedProps> = ({ age, avatar_l
             <Link className="basic-info__edit-profile" to={`/editprofile/${user_id}`}>Update my profile</Link>
             <p 
                 onClick={deleteUser}
-                className="basic-info__delete-profile">Delete profile</p>
+                className="basic-info__delete-profile">Delete profile
+            </p>
         </div>
 
         <div className="profile-section__details-info">
@@ -51,7 +57,7 @@ const UserProfileDetailed: React.FC<UserProfileDetailedProps> = ({ age, avatar_l
             <span className="additional-info__value">{age}</span>
             <span className="additional-info__key">Hobbies:</span>
             <ul>
-                { hobbies.map(hobby => {
+                { hobbies?.map(hobby => {
                     return (
                         <li 
                             key={hobby}

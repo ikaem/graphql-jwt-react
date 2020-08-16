@@ -1,114 +1,126 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, useMutation, gql, useLazyQuery } from "@apollo/client";
 import { useParams, Redirect } from "react-router-dom";
 
 import Layout from "../components/layout.component";
-import SectionTitle from '../elements/section-title.element';
+import SectionTitle from "../elements/section-title.element";
 import UserProfileDetailed from "../components/user-profile-detailed.component";
 // import ProfileAvatarContainer from "../elements/profile-avatar-container.element";
 
 const USER_DETAILED_QUERY = gql`
   query GetUserDetailed($user_id: Int!) {
-
     getUser(id: $user_id) {
-        user_id,
-        email,
-        first_name,
-        last_name,
-        city,
-        website,
-        age,
-        hobbies,
-        # country,
-        country { country_name },
-        avatar_link
+      user_id
+      email
+      first_name
+      last_name
+      city
+      website
+      age
+      hobbies
+      # country,
+      country {
+        country_name
+      }
+      avatar_link
     }
   }
 `;
 
 const USER_DELETE_MUTATION_QUERY = gql`
-    mutation DeleteUser ($user_id: Int) {
-        deleteUser(user_id: $user_id) 
-    }
+  mutation DeleteUser($user_id: Int) {
+    deleteUser(user_id: $user_id)
+  }
 `;
 
 const ProfilePage = () => {
+  const { user_id } = useParams();
+  const [isProfileDeleted, setIsProfileDeleted] = useState<Boolean>(false);
 
-    const { user_id } = useParams();
-    const [ isProfileDeleted, setIsProfileDeleted ] = useState<Boolean> (false);
+  // const { data: userData, loading: userLoading, error: userError } = useQuery(USER_DETAILED_QUERY
+  //     , {
+  //     variables: {
+  //       user_id: +user_id,
+  //     }
+  //   }
+  // );
 
+  const [
+    getUserProfile,
+    { data: userData, loading: userLoading, error: userError },
+  ] = useLazyQuery(USER_DETAILED_QUERY, {
+    variables: {
+      user_id: +user_id,
+    },
+  });
 
-    const { data: userData, loading: userLoading, error: userError } = useQuery(USER_DETAILED_QUERY
-        , {
-        variables: {
-          user_id: +user_id,
-        }
-      }
-    );
+  useEffect(() => {
+    getUserProfile();
+  }, []);
 
-    const [ deleteUser ] = useMutation(USER_DELETE_MUTATION_QUERY, {
-        variables: {
-            user_id: +user_id,
-        }, 
-        onCompleted: () => {
-            setIsProfileDeleted(true);
-        }
-    })
+  const [deleteUser] = useMutation(USER_DELETE_MUTATION_QUERY, {
+    variables: {
+      user_id: +user_id,
+    },
+    onCompleted: (data) => {
+      console.log("data from deletion", data);
+      setIsProfileDeleted(data.deleteUser);
+    },
+  });
 
-    return (
+  return (
     <Layout>
-        <ProfileStyled>
-            <section className="main-content__profile-section">
-                <div 
-                    className="people-section__title-wrapper">
-                    <SectionTitle title="Profile" />
-                </div>
+      <ProfileStyled>
+        <section className="main-content__profile-section">
+          <div className="people-section__title-wrapper">
+            <SectionTitle title="Profile" />
+          </div>
 
-                <div 
-                    className="people-section__profile-detailed-wrapper">
+          <div className="people-section__profile-detailed-wrapper">
+            {userError && (
+              <p>
+                Unfortunately, there was an error fetching user. Please try
+                again later.{" "}
+              </p>
+            )}
+            {userLoading && <p>Loading...</p>}
 
-                    {userError && <p>Unfortunately, there was an error fetching user. Please try again later. </p>}
-                    {userLoading && <p>Loading...</p>}
-
-                    {userData && <UserProfileDetailed 
-                        {...userData.getUser}
-                        deleteUser={deleteUser}
-                    />}
-                </div>
-            </section>
-        </ProfileStyled>
-        {isProfileDeleted && <Redirect to="/home" />}
+            {userData && (
+              <UserProfileDetailed
+                user={userData.getUser}
+                deleteUser={deleteUser}
+              />
+            )}
+          </div>
+        </section>
+      </ProfileStyled>
+      {isProfileDeleted && <Redirect to="/home" />}
     </Layout>
-    )
-}
+  );
+};
 
 const ProfileStyled = styled.main`
-    .main-content__profile-section {
-        margin: 1rem 0;
-        display: flex;
-        flex-direction: column;
-        /* gap: 1rem; */
-
-    }
-
+  .main-content__profile-section {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    /* gap: 1rem; */
+  }
 `;
 
 export default ProfilePage;
 
-
-
-
-
-
-
-                {/* <div 
+{
+  /* <div 
                     className="people-section__avatar-container-wrapper">
                         <ProfileAvatarContainer avatarUrl="https://source.unsplash.com/225x225/?portrait" />
-                </div> */}
+                </div> */
+}
 
-                {/* <div className="profile-section__avatar-container">
+{
+  /* <div className="profile-section__avatar-container">
                     <img src="https://source.unsplash.com/225x225/?portrait" alt=""/>
                 </div>
                 <div className="profile-section__basic-info">
@@ -135,8 +147,8 @@ export default ProfilePage;
                         <li className="additional-info__value">{"Reading"}</li>
                         <li className="additional-info__value">{"Chess"}</li>
                     </ul>
-                </div> */}
-
+                </div> */
+}
 
 /*
 const ProfileStyled = styled.main`

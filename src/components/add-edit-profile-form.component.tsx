@@ -42,7 +42,7 @@ const AddEditProfileForm = ({ countries, handleChange, handleSubmit, formState }
         onSubmit={handleSubmit}
         className="add-edit-profile-section__add-edit-profile-form">
         <div className="add-edit-profile-form__basic-info">
-    <label htmlFor="firstName" className="add-edit-profile-form__label">First Name: {typeof user_id} </label>
+            <label htmlFor="firstName" className="add-edit-profile-form__label">First Name: {typeof user_id} </label>
             <input 
                 type="text" id="firstName" 
                 name="firstName" 
